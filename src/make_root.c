@@ -11,13 +11,13 @@ MODULE_LICENSE("GPL");
 
 static int device_open(struct inode *inode, struct file *filp)
 {
-    	printk(KERN_ALERT "Device opened.");
+    	printk(KERN_ALERT "Device opened.\n");
   	return 0;
 }
 
 static int device_release(struct inode *inode, struct file *filp)
 {
-    	printk(KERN_ALERT "Device closed.");
+    	printk(KERN_ALERT "Device closed.\n");
   	return 0;
 }
 
@@ -33,20 +33,20 @@ static ssize_t device_write(struct file *filp, const char *buf, size_t len, loff
 
 static long device_ioctl(struct file *filp, unsigned int ioctl_num, unsigned long ioctl_param)
 {
-        printk(KERN_ALERT "Got ioctl argument %d!", ioctl_num);
+        printk(KERN_ALERT "Got ioctl argument %#x!\n", ioctl_num);
         if (ioctl_num == PWN)
         {
         	if (ioctl_param == 0x13371337)
         	{
-        		printk(KERN_ALERT "Granting root access!");
+        		printk(KERN_ALERT "Granting root access!\n");
     			commit_creds(prepare_kernel_cred(NULL));
     		}
     		if (ioctl_param == 0x31337)
     		{
-        		printk(KERN_ALERT "Escaping seccomp!");
-        		printk(KERN_ALERT "FLAGS BEFORE: %lx", current->thread_info.flags);
+        		printk(KERN_ALERT "Escaping seccomp!\n");
+        		printk(KERN_ALERT "FLAGS BEFORE: %lx\n", current->thread_info.flags);
     			current->thread_info.flags &= ~_TIF_SECCOMP;
-        		printk(KERN_ALERT "FLAGS AFTER: %lx", current->thread_info.flags);
+        		printk(KERN_ALERT "FLAGS AFTER: %lx\n", current->thread_info.flags);
     		}
         }
         return 0;

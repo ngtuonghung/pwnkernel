@@ -22,7 +22,16 @@ static int device_release(struct inode *inode, struct file *filp)
 static ssize_t device_read(struct file *filp, char *buffer, size_t length, loff_t *offset)
 {
 	char *msg = "Hello pwn.college!\n";
-	return copy_to_user(buffer, msg, strlen(msg)) ? -EFAULT : 0;
+	size_t msg_len = strlen(msg);
+	
+	if (*offset >= msg_len)
+		return 0;
+	
+	if (copy_to_user(buffer, msg, msg_len))
+		return -EFAULT;
+	
+	*offset += msg_len;
+	return msg_len;
 }
 
 static ssize_t device_write(struct file *filp, const char *buf, size_t len, loff_t *off)
