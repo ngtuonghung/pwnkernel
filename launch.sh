@@ -11,6 +11,7 @@ popd
 # launch
 #
 /usr/bin/qemu-system-x86_64 \
+	-enable-kvm \
 	-kernel linux-5.4/arch/x86/boot/bzImage \
 	-initrd $PWD/initramfs.cpio.gz \
 	-fsdev local,security_model=passthrough,id=fsdev0,path=$HOME \
