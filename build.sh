@@ -15,16 +15,8 @@ sudo apt-get -q install -y bc bison flex libelf-dev cpio build-essential libssl-
 #
 
 echo "[+] Downloading kernel..."
-if [ ! -f linux-$KERNEL_VERSION.tar.gz ]; then
-	wget -q -c https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-$KERNEL_VERSION.tar.gz
-fi
-
-if [ ! -d linux-$KERNEL_VERSION ]; then
-	echo "[+] Extracting kernel..."
-	tar xzf linux-$KERNEL_VERSION.tar.gz
-else
-	echo "[+] Kernel already extracted..."
-fi
+wget -q -c https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-$KERNEL_VERSION.tar.gz
+[ -e linux-$KERNEL_VERSION ] || tar xzf linux-$KERNEL_VERSION.tar.gz
 
 echo "[+] Building kernel..."
 make -C linux-$KERNEL_VERSION defconfig
@@ -57,14 +49,9 @@ echo "CONFIG_DEBUG_INFO_DWARF4=y" >> linux-$KERNEL_VERSION/.config
 echo "CONFIG_DEBUG_INFO_BTF=y" >> linux-$KERNEL_VERSION/.config
 echo "CONFIG_FRAME_POINTER=y" >> linux-$KERNEL_VERSION/.config
 
-echo "[+] Applying fixes..."
-
 sed -i 'N;s/WARN("missing symbol table");\n\t\treturn -1;/\n\t\treturn 0;\n\t\t\/\/ A missing symbol table is actually possible if its an empty .o file.  This can happen for thunk_64.o./g' linux-$KERNEL_VERSION/tools/objtool/elf.c
 
 sed -i 's/unsigned long __force_order/\/\/ unsigned long __force_order/g' linux-$KERNEL_VERSION/arch/x86/boot/compressed/pgtable_64.c
-
-# Fix strlcpy and xrealloc for glibc 2.38+ / GCC 13+
-python3 fix-kernel-build.py
 
 make -C linux-$KERNEL_VERSION -j16 bzImage
 
@@ -73,22 +60,12 @@ make -C linux-$KERNEL_VERSION -j16 bzImage
 #
 
 echo "[+] Downloading busybox..."
-if [ ! -f busybox-$BUSYBOX_VERSION.tar.bz2 ]; then
-	wget -q -c https://busybox.net/downloads/busybox-$BUSYBOX_VERSION.tar.bz2
-fi
-
-if [ ! -d busybox-$BUSYBOX_VERSION ]; then
-	echo "[+] Extracting busybox..."
-	tar xjf busybox-$BUSYBOX_VERSION.tar.bz2
-else
-	echo "[+] Busybox already extracted..."
-fi
+wget -q -c https://busybox.net/downloads/busybox-$BUSYBOX_VERSION.tar.bz2
+[ -e busybox-$BUSYBOX_VERSION ] || tar xjf busybox-$BUSYBOX_VERSION.tar.bz2
 
 echo "[+] Building busybox..."
 make -C busybox-$BUSYBOX_VERSION defconfig
 sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/g' busybox-$BUSYBOX_VERSION/.config
-# Disable tc to avoid CBQ build errors with modern kernel headers
-sed -i 's/CONFIG_TC=y/# CONFIG_TC is not set/g' busybox-$BUSYBOX_VERSION/.config
 make -C busybox-$BUSYBOX_VERSION -j16
 make -C busybox-$BUSYBOX_VERSION install
 

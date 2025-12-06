@@ -16,3 +16,8 @@
 /fs/sbin
 /fs/usr
 /fs/bin
+/fs/home
+/fs/proc
+/fs/root
+/fs/sys
+/vmlinux
