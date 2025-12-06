@@ -20,4 +20,6 @@
 /fs/proc
 /fs/root
 /fs/sys
-/vmlinux
+/.claude
+/.gdb_history
+/.ash_history

@@ -1,16 +1,14 @@
 #!/bin/bash -e
 
-echo "[+] Building kernel in Docker container..."
-docker build -t pwnkernel-build .
+# echo "[+] Building kernel in Docker container..."
+# docker build -t pwnkernel-build .
 
 echo "[+] Creating temporary container..."
 CONTAINER_ID=$(docker create pwnkernel-build)
 
-echo "[+] Extracting bzImage..."
-docker cp $CONTAINER_ID:/build/linux-5.4/arch/x86/boot/bzImage ./bzImage
-
-echo "[+] Extracting vmlinux..."
-docker cp $CONTAINER_ID:/build/linux-5.4/vmlinux ./vmlinux
+echo "[+] Extracting linux-5.4 folder..."
+rm -rf ./linux-5.4
+docker cp $CONTAINER_ID:/build/linux-5.4 ./linux-5.4
 
 echo "[+] Extracting filesystem..."
 rm -rf ./fs
@@ -22,7 +20,8 @@ docker rm $CONTAINER_ID
 echo ""
 echo "================================"
 echo "[+] Build complete!"
-echo "    bzImage: ./bzImage"
-echo "    vmlinux: ./vmlinux"
+echo "    Kernel: ./linux-5.4/"
+echo "    bzImage: ./linux-5.4/arch/x86/boot/bzImage"
+echo "    vmlinux: ./linux-5.4/vmlinux"
 echo "    filesystem: ./fs/"
 echo "================================"

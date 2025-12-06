@@ -12,7 +12,7 @@ popd
 #
 /usr/bin/qemu-system-x86_64 \
 	-enable-kvm \
-	-kernel bzImage \
+	-kernel ./linux-5.4/arch/x86/boot/bzImage \
 	-initrd $PWD/initramfs.cpio.gz \
 	-fsdev local,security_model=passthrough,id=fsdev0,path=$HOME/pwnkernel/ \
 	-device virtio-9p-pci,id=fs0,fsdev=fsdev0,mount_tag=hostshare \
