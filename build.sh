@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-# echo "[+] Building kernel in Docker container..."
-# docker build -t pwnkernel-build .
+echo "[+] Building kernel in Docker container..."
+docker build -t pwnkernel-build .
 
 echo "[+] Creating temporary container..."
 CONTAINER_ID=$(docker create pwnkernel-build)
