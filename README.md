@@ -13,5 +13,3 @@ $ ./launch.sh
 ```
 
 All modules will be in `/`, ready to be `insmod`ed, and the `$HOME/pwnkernel/` will be mounted as `/home/ctf` in the guest.
-
-https://ngtuonghung.github.io/pwn/learning/pwnkernel/
